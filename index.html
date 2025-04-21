@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Stem and Leaf Plot Analyzer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f4f4f4;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 20px;
+      }
+      .plot {
+        white-space: pre;
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        background: #333;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Stem and Leaf Plot</h1>
+
+    <h3>Book 1: Crime and Punishment by Fyodor Dostoevsky</h3>
+    <textarea
+      id="book1"
+      placeholder="Paste text from Crime and Punishment..."
+    ></textarea>
+
+    <h3>Book 2: The Captain's Daughter by Alexander Pushkin</h3>
+    <textarea
+      id="book2"
+      placeholder="Paste text from Captain's Daughter"
+    ></textarea>
+
+    <button onclick="analyzeText()">Generate Stem and Leaf Plots</button>
+
+    <h2>Stem and Leaf Plot for Crime and Punishment:</h2>
+    <div class="plot" id="plot1"></div>
+
+    <h2>Stem and Leaf Plot for Captain's Daughter:</h2>
+    <div class="plot" id="plot2"></div>
+
+    <script>
+      function getSentences(text) {
+        return text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+      }
+
+      function getWordCount(sentence) {
+        return sentence.trim().split(/\s+/).filter(Boolean).length;
+      }
+
+      function getStemLeafData(wordCounts) {
+        const stemLeaf = {};
+        wordCounts.forEach((count) => {
+          const stem = Math.floor(count / 10);
+          const leaf = count % 10;
+          if (!stemLeaf[stem]) {
+            stemLeaf[stem] = [];
+          }
+          stemLeaf[stem].push(leaf);
+        });
+        return stemLeaf;
+      }
+
+      function renderStemLeaf(stemLeaf) {
+        const stems = Object.keys(stemLeaf).sort((a, b) => a - b);
+        let result = "";
+        stems.forEach((stem) => {
+          const leaves = stemLeaf[stem].sort((a, b) => a - b);
+          result += `${stem} | ${leaves.join(" ")}\n`;
+        });
+        return result || "Not enough sentences.";
+      }
+
+      function analyzeText() {
+        const text1 = document.getElementById("book1").value;
+        const text2 = document.getElementById("book2").value;
+
+        const sentences1 = getSentences(text1).slice(0, 100);
+        const wordCounts1 = sentences1.map(getWordCount);
+        const stemLeaf1 = getStemLeafData(wordCounts1);
+
+        const sentences2 = getSentences(text2).slice(0, 100);
+        const wordCounts2 = sentences2.map(getWordCount);
+        const stemLeaf2 = getStemLeafData(wordCounts2);
+
+        document.getElementById("plot1").textContent =
+          renderStemLeaf(stemLeaf1);
+        document.getElementById("plot2").textContent =
+          renderStemLeaf(stemLeaf2);
+      }
+    </script>
+  </body>
+</html>
