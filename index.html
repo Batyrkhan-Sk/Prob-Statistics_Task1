@@ -58,7 +58,7 @@
 
     <script>
       function getSentences(text) {
-        return text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+        return text.match(/[^\.!\?…]+[\.!\?…]+(\s|$)/g) || [];
       }
 
       function getWordCount(sentence) {
